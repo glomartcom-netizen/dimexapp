@@ -12,117 +12,97 @@ background:#000;
 color:#fff;
 font-family:Arial;
 margin:0;
-text-align:center;
 }
 
 header{
+display:flex;
+justify-content:space-between;
+align-items:center;
 padding:20px;
-font-size:28px;
-color:gold;
 border-bottom:1px solid #222;
 }
 
+.logo{
+color:gold;
+font-size:24px;
+font-weight:bold;
+}
+
+nav a{
+color:#fff;
+margin:0 10px;
+text-decoration:none;
+}
+
 .hero{
-padding:40px;
+text-align:center;
+padding:80px 20px;
+}
+
+.hero h1{
+font-size:42px;
+color:gold;
 }
 
 button{
-padding:16px 30px;
+padding:14px 28px;
 background:gold;
 border:none;
+border-radius:8px;
 font-size:18px;
-border-radius:10px;
-margin:10px;
+margin-top:20px;
+}
+
+.section{
+padding:70px 20px;
+text-align:center;
 }
 
 .card{
 background:#111;
+padding:30px;
 margin:20px auto;
-padding:20px;
 border-radius:12px;
-max-width:400px;
+max-width:800px;
 }
 
-input{
-padding:12px;
-width:80%;
-margin:10px;
+h2{
+color:gold;
+}
+
+footer{
+text-align:center;
+padding:40px;
+border-top:1px solid #222;
 }
 </style>
 </head>
 
 <body>
 
-<header>DimeX (DX) – BNB Smart Chain</header>
+<header>
+<div class="logo">DimeX (DX)</div>
+<nav>
+<a href="#">Home</a>
+<a href="#core">Core Value</a>
+<a href="#vision">Vision</a>
+<a href="#mission">Mission</a>
+<a href="#market">Market</a>
+</nav>
+</header>
 
+<!-- HERO -->
 <div class="hero">
-<h2>Secure Staking Dashboard</h2>
+<h1>DimeX Staking Ecosystem</h1>
+<p>Secure • Transparent • Community Driven</p>
+
 <button onclick="connectWallet()">CONNECT WALLET</button>
-<div id="wallet" style="color:gold;margin-top:10px;"></div>
+<div id="wallet" style="margin-top:15px;color:gold;"></div>
 </div>
 
-<div id="dash" style="display:none;">
-
+<!-- CORE VALUE -->
+<div class="section" id="core">
+<h2>Core Value</h2>
 <div class="card">
-<h3>Stake DX</h3>
-<input id="amount" placeholder="Enter DX amount">
-<br>
-<button onclick="stake()">Stake</button>
-</div>
-
-<div class="card">
-<h3>Your Stake</h3>
-<p id="staked">0 DX</p>
-</div>
-
-<div class="card">
-<h3>Claim Rewards</h3>
-<button onclick="claim()">Claim</button>
-</div>
-
-</div>
-
-<script>
-async function connectWallet(){
-
-// inside metamask browser
-if (window.ethereum) {
-
-try {
-const accounts = await window.ethereum.request({
-method: "eth_requestAccounts"
-});
-
-document.getElementById("wallet").innerHTML =
-"Connected: " + accounts[0];
-
-document.getElementById("dash").style.display="block";
-
-} catch(e){
-alert("Connection rejected");
-}
-
-} else {
-
-// auto open metamask app
-const dapp = window.location.href.replace("https://","");
-window.location.href =
-"https://metamask.app.link/dapp/" + dapp;
-
-}
-
-}
-
-function stake(){
-let amt=document.getElementById("amount").value;
-document.getElementById("staked").innerHTML=amt+" DX";
-alert("Demo staking");
-}
-
-function claim(){
-alert("Rewards claimed");
-}
-</script>
-
-</body>
-</html>
+<p>Transparency in smart contracts</p>
+<p>Secure staking infrastructure</p
