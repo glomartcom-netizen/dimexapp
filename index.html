@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DimeX (DX)</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+
+<style>
+body{
+background:#000;
+color:#fff;
+font-family:Arial;
+margin:0;
+text-align:center;
+}
+
+header{
+padding:20px;
+font-size:28px;
+color:gold;
+border-bottom:1px solid #222;
+}
+
+.hero{
+padding:40px;
+}
+
+button{
+padding:16px 30px;
+background:gold;
+border:none;
+font-size:18px;
+border-radius:10px;
+margin:10px;
+}
+
+.card{
+background:#111;
+margin:20px auto;
+padding:20px;
+border-radius:12px;
+max-width:400px;
+}
+
+input{
+padding:12px;
+width:80%;
+margin:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>DimeX (DX) – BNB Smart Chain</header>
+
+<div class="hero">
+<h2>Secure Staking Dashboard</h2>
+<button onclick="connectWallet()">CONNECT WALLET</button>
+<div id="wallet" style="color:gold;margin-top:10px;"></div>
+</div>
+
+<div id="dash" style="display:none;">
+
+<div class="card">
+<h3>Stake DX</h3>
+<input id="amount" placeholder="Enter DX amount">
+<br>
+<button onclick="stake()">Stake</button>
+</div>
+
+<div class="card">
+<h3>Your Stake</h3>
+<p id="staked">0 DX</p>
+</div>
+
+<div class="card">
+<h3>Claim Rewards</h3>
+<button onclick="claim()">Claim</button>
+</div>
+
+</div>
+
+<script>
+async function connectWallet(){
+
+// inside metamask browser
+if (window.ethereum) {
+
+try {
+const accounts = await window.ethereum.request({
+method: "eth_requestAccounts"
+});
+
+document.getElementById("wallet").innerHTML =
+"Connected: " + accounts[0];
+
+document.getElementById("dash").style.display="block";
+
+} catch(e){
+alert("Connection rejected");
+}
+
+} else {
+
+// auto open metamask app
+const dapp = window.location.href.replace("https://","");
+window.location.href =
+"https://metamask.app.link/dapp/" + dapp;
+
+}
+
+}
+
+function stake(){
+let amt=document.getElementById("amount").value;
+document.getElementById("staked").innerHTML=amt+" DX";
+alert("Demo staking");
+}
+
+function claim(){
+alert("Rewards claimed");
+}
+</script>
+
+</body>
+</html>
