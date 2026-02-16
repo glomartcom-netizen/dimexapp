@@ -30,25 +30,32 @@ input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px s
 
 <body>
 
-<div class="top"
-style="display:flex;flex-direction:column;align-items:center;padding:30px 0;">
+<div style="text-align:center;padding:25px 0;">
 
-<img src="data:image/png;base64,iVBORw0KGgoAAA..."
-style="width:180px;margin-bottom:12px;filter:drop-shadow(0 0 25px gold);">
+<div style="
+display:flex;
+justify-content:center;
+align-items:center;
+gap:12px;
+">
+
+<img src="https://i.imgur.com/8Km9tLL.png" style="width:90px;">
 
 <div style="
 font-size:28px;
 font-weight:bold;
 color:gold;
-margin-bottom:18px;
 ">
 DimeX Dashboard
 </div>
 
-<button class="btn" onclick="connect()">Connect Wallet</button>
-
 </div>
 
+<div style="margin-top:15px;">
+<button class="btn" onclick="connect()">Connect Wallet</button>
+</div>
+
+</div>
 <div id="wallet"></div>
 <div id="status"></div>
 
