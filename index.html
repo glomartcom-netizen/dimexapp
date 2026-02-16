@@ -17,7 +17,6 @@ body{margin:0;background:#000;color:#fff;font-family:Arial}
 .right{width:40%;padding:20px}
 
 .statGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
 .statBox{background:#111;padding:12px;border-radius:10px}
 .statBox h4{margin:0;font-size:12px;color:#aaa}
 .statValue{color:gold;font-size:16px;font-weight:bold;margin-top:4px}
@@ -27,8 +26,11 @@ body{margin:0;background:#000;color:#fff;font-family:Arial}
 
 input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #333}
 
-#status{padding:10px;color:gold}
 #wallet{padding:10px;color:#aaa}
+#status{padding:10px;color:gold}
+
+.centerCard{display:flex;justify-content:center;align-items:center}
+.centerColumn{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:15px}
 
 @media(max-width:900px){
 .container{flex-direction:column}
@@ -100,7 +102,8 @@ input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px s
 <!-- RIGHT -->
 <div class="right">
 
-<div class="card">
+<!-- STAKE CENTER -->
+<div class="card centerCard">
 <button class="btn" onclick="toggleStake()">STAKE</button>
 </div>
 
@@ -127,16 +130,14 @@ input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px s
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 
-<div class="card">
+<div class="card centerColumn">
 <h3>Claimable</h3>
 <div id="claimAmount" class="amount">0</div>
-<br>
 <button id="claimBtn" class="btn" onclick="claim()" disabled>CLAIM</button>
 </div>
 
-<div class="card">
+<div class="card centerColumn">
 <button class="btn" onclick="toggleDownline()">VIEW DOWNLINE</button>
-<br><br>
 <button class="btn" onclick="toggleHistory()">CLAIM HISTORY</button>
 </div>
 
@@ -154,7 +155,6 @@ input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px s
 </div>
 
 <script>
-
 let provider, signer, staking, usdt, dx;
 
 const stakingAddress="PASTE_STAKING";
@@ -165,8 +165,7 @@ const stakingABI=[
 "function stakeUSDT(uint amount,address ref)",
 "function stakeDX(uint amount,address ref)",
 "function claim()",
-"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)",
-"event Transfer(address indexed from,address indexed to,uint value)"
+"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)"
 ];
 
 const erc20ABI=[
@@ -233,7 +232,6 @@ async function loadData(){
 
 let addr=await signer.getAddress();
 let d=await staking.userInfo(addr);
-
 let pending=d[5];
 
 document.getElementById("totalStake").innerHTML=ethers.utils.formatUnits(d[0],18);
@@ -293,7 +291,7 @@ await tx.wait();
 setStatus("Claimed");
 loadData();
 }
-
 </script>
+
 </body>
-                   </html>
+  </html>
