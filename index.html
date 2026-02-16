@@ -9,44 +9,26 @@
 body{margin:0;background:#000;color:#fff;font-family:Arial}
 .top{background:#111;padding:20px;display:flex;justify-content:space-between}
 .logo{color:gold;font-size:24px}
-.btn{background:gold;border:none;padding:10px 18px;border-radius:8px}
+.btn{background:gold;border:none;padding:10px 18px;border-radius:8px;cursor:pointer}
+.btn:disabled{opacity:.4}
 
 .container{display:flex}
 .left{width:60%;padding:20px}
 .right{width:40%;padding:20px}
 
+.statGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.statBox{background:#111;padding:12px;border-radius:10px}
+.statBox h4{margin:0;font-size:12px;color:#aaa}
+.statValue{color:gold;font-size:16px;font-weight:bold;margin-top:4px}
+
 .card{background:#111;padding:15px;border-radius:12px;margin:10px}
+.amount{color:gold;font-weight:bold;font-size:18px}
 
-.amount{color:gold;font-weight:bold}
+input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #333}
 
-.statGrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.statBox{
-background:#111;
-padding:12px;
-border-radius:10px;
-}
-
-.statBox h4{
-margin:0;
-font-size:12px;
-color:#aaa;
-}
-
-.statValue{
-color:gold;
-font-size:16px;
-font-weight:bold;
-margin-top:4px;
-}
-
-input{
-padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #333
-}
+#status{padding:10px;color:gold}
+#wallet{padding:10px;color:#aaa}
 
 @media(max-width:900px){
 .container{flex-direction:column}
@@ -62,12 +44,12 @@ padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #
 <button class="btn" onclick="connect()">Connect Wallet</button>
 </div>
 
-<div id="wallet" style="padding:10px;color:#aaa"></div>
-<div id="status" style="padding:10px;color:gold"></div>
+<div id="wallet"></div>
+<div id="status"></div>
 
 <div class="container">
 
-<!-- LEFT SIDE -->
+<!-- LEFT -->
 <div class="left">
 
 <div class="statGrid">
@@ -105,19 +87,17 @@ padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #
 </div>
 
 <div class="card">
-<h3 style="color:white">Referral Link</h3>
-
+<h3>Referral Link</h3>
 <div style="display:flex;gap:10px">
 <input id="refInput" style="color:gold" readonly>
 <button class="btn" onclick="copyRef()">COPY</button>
 </div>
-
 <div id="copyMsg" style="font-size:12px;color:#888"></div>
 </div>
 
 </div>
 
-<!-- RIGHT SIDE -->
+<!-- RIGHT -->
 <div class="right">
 
 <div class="card">
@@ -126,42 +106,48 @@ padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #
 
 <div id="stakeBox" style="display:none">
 
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+
 <div class="card">
-<h3>Stake USDT</h3>
+<h3>USDT</h3>
 <input id="usdtAmount" placeholder="Amount">
 <button class="btn" onclick="approveUSDT()">Approve</button>
 <button class="btn" onclick="stakeUSDT()">Stake</button>
 </div>
 
 <div class="card">
-<h3>Stake DX</h3>
+<h3>DX</h3>
 <input id="dxAmount" placeholder="Amount">
 <button class="btn" onclick="approveDX()">Approve</button>
 <button class="btn" onclick="stakeDX()">Stake</button>
 </div>
 
 </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 
 <div class="card">
-<h3>Claimable Reward</h3>
-<div id="claimAmount" class="statValue">0</div>
+<h3>Claimable</h3>
+<div id="claimAmount" class="amount">0</div>
 <br>
 <button id="claimBtn" class="btn" onclick="claim()" disabled>CLAIM</button>
-<div style="font-size:12px;color:#888">Minimum 100 DX</div>
 </div>
 
 <div class="card">
 <button class="btn" onclick="toggleDownline()">VIEW DOWNLINE</button>
-<div id="downlineBox" style="display:none">
-<table id="teamTable"></table>
-</div>
+<br><br>
+<button class="btn" onclick="toggleHistory()">CLAIM HISTORY</button>
 </div>
 
-<div class="card">
-<button class="btn" onclick="toggleHistory()">CLAIM HISTORY</button>
-<div id="historyBox" style="display:none">
-<table id="claimTable"></table>
 </div>
+
+<div id="downlineBox" style="display:none" class="card">
+<table id="teamTable"></table>
+</div>
+
+<div id="historyBox" style="display:none" class="card">
+<table id="claimTable"></table>
 </div>
 
 </div>
@@ -179,12 +165,15 @@ const stakingABI=[
 "function stakeUSDT(uint amount,address ref)",
 "function stakeDX(uint amount,address ref)",
 "function claim()",
-"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)"
+"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)",
+"event Transfer(address indexed from,address indexed to,uint value)"
 ];
 
 const erc20ABI=[
 "function approve(address spender,uint amount) returns(bool)"
 ];
+
+function setStatus(msg){document.getElementById("status").innerHTML=msg;}
 
 function toggleStake(){
 let box=document.getElementById("stakeBox");
@@ -229,13 +218,13 @@ setInterval(loadData,10000);
 
 async function setRefLink(){
 let addr=await signer.getAddress();
-let link=window.location.origin+"?ref="+addr;
-document.getElementById("refInput").value=link;
+document.getElementById("refInput").value=
+window.location.origin+"?ref="+addr;
 }
 
 function copyRef(){
-let input=document.getElementById("refInput");
-navigator.clipboard.writeText(input.value);
+let v=document.getElementById("refInput").value;
+navigator.clipboard.writeText(v);
 document.getElementById("copyMsg").innerHTML="Copied!";
 setTimeout(()=>{document.getElementById("copyMsg").innerHTML="";},2000);
 }
@@ -256,43 +245,55 @@ document.getElementById("levelIncome").innerHTML=ethers.utils.formatUnits(d[4],1
 document.getElementById("claimAmount").innerHTML=ethers.utils.formatUnits(pending,18);
 
 let btn=document.getElementById("claimBtn");
-
-if(pending>=ethers.utils.parseUnits("100",18)){
-btn.disabled=false;
-}else{
-btn.disabled=true;
-}
+btn.disabled = pending < ethers.utils.parseUnits("100",18);
 }
 
 async function approveUSDT(){
+setStatus("Approving...");
 let amt=document.getElementById("usdtAmount").value;
-await usdt.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
+let tx=await usdt.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
+await tx.wait();
+setStatus("Approved");
 }
 
 async function approveDX(){
+setStatus("Approving...");
 let amt=document.getElementById("dxAmount").value;
-await dx.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
+let tx=await dx.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
+await tx.wait();
+setStatus("Approved");
 }
 
 async function stakeUSDT(){
+setStatus("Staking...");
 let amt=document.getElementById("usdtAmount").value;
 let ref=getRef()||"0x0000000000000000000000000000000000000000";
-await staking.stakeUSDT(ethers.utils.parseUnits(amt,18),ref);
+let tx=await staking.stakeUSDT(ethers.utils.parseUnits(amt,18),ref);
+await tx.wait();
+setStatus("Done");
 loadData();
 }
 
 async function stakeDX(){
+setStatus("Staking...");
 let amt=document.getElementById("dxAmount").value;
 let ref=getRef()||"0x0000000000000000000000000000000000000000";
-await staking.stakeDX(ethers.utils.parseUnits(amt,18),ref);
+let tx=await staking.stakeDX(ethers.utils.parseUnits(amt,18),ref);
+await tx.wait();
+setStatus("Done");
 loadData();
 }
 
 async function claim(){
-await staking.claim();
+let btn=document.getElementById("claimBtn");
+btn.disabled=true;
+setStatus("Claiming...");
+let tx=await staking.claim();
+await tx.wait();
+setStatus("Claimed");
 loadData();
 }
 
 </script>
 </body>
-  </html>
+                   </html>
