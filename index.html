@@ -7,32 +7,50 @@
 
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial}
-.top{background:#111;padding:20px;display:flex;justify-content:space-between;align-items:center}
+.top{background:#111;padding:20px;display:flex;justify-content:space-between}
 .logo{color:gold;font-size:24px}
-.btn{background:gold;border:none;padding:12px 20px;border-radius:8px;cursor:pointer}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn{background:gold;border:none;padding:10px 18px;border-radius:8px}
 
 .container{display:flex}
 .left{width:60%;padding:20px}
 .right{width:40%;padding:20px}
 
-.card{background:#111;padding:20px;border-radius:12px;margin:10px}
-.amount{color:gold;font-size:20px;font-weight:bold}
+.card{background:#111;padding:15px;border-radius:12px;margin:10px}
 
-input{
-padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #333;border-radius:8px
+.amount{color:gold;font-weight:bold}
+
+.statGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
 }
 
-table{width:100%;margin-top:10px;border-collapse:collapse}
-td,th{padding:8px;border-bottom:1px solid #333}
+.statBox{
+background:#111;
+padding:12px;
+border-radius:10px;
+}
 
-.small{font-size:12px;color:#aaa}
-#status{padding:10px;color:gold}
-#wallet{padding:10px;color:#aaa}
+.statBox h4{
+margin:0;
+font-size:12px;
+color:#aaa;
+}
+
+.statValue{
+color:gold;
+font-size:16px;
+font-weight:bold;
+margin-top:4px;
+}
+
+input{
+padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #333
+}
 
 @media(max-width:900px){
-  .container{flex-direction:column}
-  .left,.right{width:100%}
+.container{flex-direction:column}
+.left,.right{width:100%}
 }
 </style>
 </head>
@@ -40,267 +58,241 @@ td,th{padding:8px;border-bottom:1px solid #333}
 <body>
 
 <div class="top">
-  <div class="logo">DimeX Dashboard</div>
-  <div>
-    <button class="btn" onclick="connect()">Connect Wallet</button>
-  </div>
+<div class="logo">DimeX Dashboard</div>
+<button class="btn" onclick="connect()">Connect Wallet</button>
 </div>
 
-<div id="wallet"></div>
-<div id="status"></div>
+<div id="wallet" style="padding:10px;color:#aaa"></div>
+<div id="status" style="padding:10px;color:gold"></div>
 
 <div class="container">
 
-  <!-- LEFT SIDE -->
-  <div class="left">
-    <div class="card"><h3>Total Stake</h3><div id="totalStake" class="amount">0</div></div>
-    <div class="card"><h3>Daily Reward</h3><div id="dailyReward" class="amount">0</div></div>
-    <div class="card"><h3>Direct Income</h3><div id="directIncome" class="amount">0</div></div>
-    <div class="card"><h3>Level Income</h3><div id="levelIncome" class="amount">0</div></div>
-    <div class="card"><h3>Total Income</h3><div id="totalIncome" class="amount">0</div></div>
-    <div class="card"><h3>Team Count</h3><div id="teamCount" class="amount">0</div></div>
+<!-- LEFT SIDE -->
+<div class="left">
 
-    <div class="card">
-      <h3 style="color:white">Referral Link</h3>
-      <div style="display:flex;gap:10px">
-        <input id="refInput" style="color:gold" readonly>
-        <button class="btn" onclick="copyRef()">COPY</button>
-      </div>
-      <div id="copyMsg" class="small"></div>
-    </div>
-  </div>
+<div class="statGrid">
 
-  <!-- RIGHT SIDE -->
-  <div class="right">
+<div class="statBox">
+<h4>Total Stake</h4>
+<div id="totalStake" class="statValue">0</div>
+</div>
 
-    <div class="card">
-      <button class="btn" onclick="toggleStake()">STAKE</button>
-    </div>
+<div class="statBox">
+<h4>Daily Reward</h4>
+<div id="dailyReward" class="statValue">0</div>
+</div>
 
-    <div id="stakeBox" style="display:none">
+<div class="statBox">
+<h4>Total Income</h4>
+<div id="totalIncome" class="statValue">0</div>
+</div>
 
-      <div class="card">
-        <h3>Stake USDT</h3>
-        <input id="usdtAmount" placeholder="Amount">
-        <button class="btn" onclick="approveUSDT()">Approve</button>
-        <button class="btn" onclick="stakeUSDT()">Stake</button>
-      </div>
+<div class="statBox">
+<h4>Direct Income</h4>
+<div id="directIncome" class="statValue">0</div>
+</div>
 
-      <div class="card">
-        <h3>Stake DX</h3>
-        <input id="dxAmount" placeholder="Amount">
-        <button class="btn" onclick="approveDX()">Approve</button>
-        <button class="btn" onclick="stakeDX()">Stake</button>
-      </div>
+<div class="statBox">
+<h4>Level Income</h4>
+<div id="levelIncome" class="statValue">0</div>
+</div>
 
-    </div>
+<div class="statBox">
+<h4>Team Count</h4>
+<div id="teamCount" class="statValue">0</div>
+</div>
 
-    <div class="card">
-      <h3>Claimable Reward</h3>
-      <div id="claimAmount" class="amount">0</div>
-      <br>
-      <button id="claimBtn" class="btn" onclick="claim()" disabled>CLAIM</button>
-      <div class="small">Minimum 100 DX</div>
-    </div>
+</div>
 
-    <div class="card">
-      <button class="btn" onclick="toggleDownline()">VIEW DOWNLINE</button>
-      <div id="downlineBox" style="display:none">
-        <table id="teamTable"></table>
-      </div>
-    </div>
+<div class="card">
+<h3 style="color:white">Referral Link</h3>
 
-    <div class="card">
-      <button class="btn" onclick="toggleHistory()">CLAIM HISTORY</button>
-      <div id="historyBox" style="display:none">
-        <table id="claimTable"></table>
-      </div>
-    </div>
+<div style="display:flex;gap:10px">
+<input id="refInput" style="color:gold" readonly>
+<button class="btn" onclick="copyRef()">COPY</button>
+</div>
 
-  </div>
+<div id="copyMsg" style="font-size:12px;color:#888"></div>
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+<div class="right">
+
+<div class="card">
+<button class="btn" onclick="toggleStake()">STAKE</button>
+</div>
+
+<div id="stakeBox" style="display:none">
+
+<div class="card">
+<h3>Stake USDT</h3>
+<input id="usdtAmount" placeholder="Amount">
+<button class="btn" onclick="approveUSDT()">Approve</button>
+<button class="btn" onclick="stakeUSDT()">Stake</button>
+</div>
+
+<div class="card">
+<h3>Stake DX</h3>
+<input id="dxAmount" placeholder="Amount">
+<button class="btn" onclick="approveDX()">Approve</button>
+<button class="btn" onclick="stakeDX()">Stake</button>
+</div>
+
+</div>
+
+<div class="card">
+<h3>Claimable Reward</h3>
+<div id="claimAmount" class="statValue">0</div>
+<br>
+<button id="claimBtn" class="btn" onclick="claim()" disabled>CLAIM</button>
+<div style="font-size:12px;color:#888">Minimum 100 DX</div>
+</div>
+
+<div class="card">
+<button class="btn" onclick="toggleDownline()">VIEW DOWNLINE</button>
+<div id="downlineBox" style="display:none">
+<table id="teamTable"></table>
+</div>
+</div>
+
+<div class="card">
+<button class="btn" onclick="toggleHistory()">CLAIM HISTORY</button>
+<div id="historyBox" style="display:none">
+<table id="claimTable"></table>
+</div>
+</div>
+
+</div>
 </div>
 
 <script>
+
 let provider, signer, staking, usdt, dx;
 
-const stakingAddress = "PASTE_STAKING";
-const dxAddress      = "PASTE_DX";
-const usdtAddress    = "0x55d398326f99059fF775485246999027B3197955";
+const stakingAddress="PASTE_STAKING";
+const dxAddress="PASTE_DX";
+const usdtAddress="0x55d398326f99059fF775485246999027B3197955";
 
-const stakingABI = [
- "function stakeUSDT(uint amount,address ref)",
- "function stakeDX(uint amount,address ref)",
- "function claim()",
- "function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)",
- "event Transfer(address indexed from,address indexed to,uint value)"
+const stakingABI=[
+"function stakeUSDT(uint amount,address ref)",
+"function stakeDX(uint amount,address ref)",
+"function claim()",
+"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)"
 ];
 
-const erc20ABI = [
- "function approve(address spender,uint amount) returns(bool)"
+const erc20ABI=[
+"function approve(address spender,uint amount) returns(bool)"
 ];
-
-function setStatus(msg){ document.getElementById("status").innerText = msg || ""; }
 
 function toggleStake(){
-  let box=document.getElementById("stakeBox");
-  box.style.display = box.style.display=="none"?"block":"none";
+let box=document.getElementById("stakeBox");
+box.style.display=box.style.display=="none"?"block":"none";
 }
 
 function toggleDownline(){
-  let box=document.getElementById("downlineBox");
-  box.style.display = box.style.display=="none"?"block":"none";
-  if(box.style.display=="block") loadTeam();
+let box=document.getElementById("downlineBox");
+box.style.display=box.style.display=="none"?"block":"none";
 }
 
 function toggleHistory(){
-  let box=document.getElementById("historyBox");
-  box.style.display = box.style.display=="none"?"block":"none";
-  if(box.style.display=="block") loadClaims();
+let box=document.getElementById("historyBox");
+box.style.display=box.style.display=="none"?"block":"none";
 }
 
 function getRef(){
-  const p=new URLSearchParams(window.location.search);
-  return p.get("ref");
+const p=new URLSearchParams(window.location.search);
+return p.get("ref");
 }
 
 async function connect(){
-  if(!window.ethereum){ alert("Install MetaMask"); return; }
 
-  await window.ethereum.request({method:'eth_requestAccounts'});
-  provider=new ethers.providers.Web3Provider(window.ethereum);
-  signer=provider.getSigner();
+await window.ethereum.request({method:'eth_requestAccounts'});
+provider=new ethers.providers.Web3Provider(window.ethereum);
+signer=provider.getSigner();
 
-  const net = await provider.getNetwork();
-  if(net.chainId !== 56){
-    alert("Switch to BSC Mainnet");
-    return;
-  }
+const net=await provider.getNetwork();
+if(net.chainId!==56){alert("Switch to BSC");return;}
 
-  staking=new ethers.Contract(stakingAddress,stakingABI,signer);
-  usdt=new ethers.Contract(usdtAddress,erc20ABI,signer);
-  dx   =new ethers.Contract(dxAddress,erc20ABI,signer);
+staking=new ethers.Contract(stakingAddress,stakingABI,signer);
+usdt=new ethers.Contract(usdtAddress,erc20ABI,signer);
+dx=new ethers.Contract(dxAddress,erc20ABI,signer);
 
-  let addr=await signer.getAddress();
-  document.getElementById("wallet").innerHTML="Wallet: "+addr;
+let addr=await signer.getAddress();
+document.getElementById("wallet").innerHTML="Wallet: "+addr;
 
-  setRefLink();
-  await loadData();
-  setInterval(loadData,10000);
+setRefLink();
+loadData();
+setInterval(loadData,10000);
 }
 
 async function setRefLink(){
-  let addr=await signer.getAddress();
-  let link=window.location.origin+"?ref="+addr;
-  document.getElementById("refInput").value=link;
+let addr=await signer.getAddress();
+let link=window.location.origin+"?ref="+addr;
+document.getElementById("refInput").value=link;
 }
 
 function copyRef(){
-  let input=document.getElementById("refInput");
-  navigator.clipboard.writeText(input.value);
-  document.getElementById("copyMsg").innerHTML="Copied!";
-  setTimeout(()=>{document.getElementById("copyMsg").innerHTML="";},2000);
+let input=document.getElementById("refInput");
+navigator.clipboard.writeText(input.value);
+document.getElementById("copyMsg").innerHTML="Copied!";
+setTimeout(()=>{document.getElementById("copyMsg").innerHTML="";},2000);
 }
 
 async function loadData(){
-  let addr=await signer.getAddress();
-  let d=await staking.userInfo(addr);
 
-  let pending=d[5];
+let addr=await signer.getAddress();
+let d=await staking.userInfo(addr);
 
-  document.getElementById("totalStake").innerHTML=ethers.utils.formatUnits(d[0],18);
-  document.getElementById("dailyReward").innerHTML=ethers.utils.formatUnits(d[1],18);
-  document.getElementById("totalIncome").innerHTML=ethers.utils.formatUnits(d[2],18);
-  document.getElementById("directIncome").innerHTML=ethers.utils.formatUnits(d[3],18);
-  document.getElementById("levelIncome").innerHTML=ethers.utils.formatUnits(d[4],18);
+let pending=d[5];
 
-  let formatted=ethers.utils.formatUnits(pending,18);
-  document.getElementById("claimAmount").innerHTML=formatted;
+document.getElementById("totalStake").innerHTML=ethers.utils.formatUnits(d[0],18);
+document.getElementById("dailyReward").innerHTML=ethers.utils.formatUnits(d[1],18);
+document.getElementById("totalIncome").innerHTML=ethers.utils.formatUnits(d[2],18);
+document.getElementById("directIncome").innerHTML=ethers.utils.formatUnits(d[3],18);
+document.getElementById("levelIncome").innerHTML=ethers.utils.formatUnits(d[4],18);
 
-  let btn=document.getElementById("claimBtn");
-  if(pending>=ethers.utils.parseUnits("100",18)){
-    btn.disabled=false;
-  }else{
-    btn.disabled=true;
-  }
+document.getElementById("claimAmount").innerHTML=ethers.utils.formatUnits(pending,18);
+
+let btn=document.getElementById("claimBtn");
+
+if(pending>=ethers.utils.parseUnits("100",18)){
+btn.disabled=false;
+}else{
+btn.disabled=true;
+}
 }
 
 async function approveUSDT(){
-  try{
-    setStatus("Approving USDT...");
-    let amt=document.getElementById("usdtAmount").value;
-    let tx = await usdt.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
-    await tx.wait();
-    setStatus("USDT Approved");
-  }catch(e){ setStatus("Error"); }
+let amt=document.getElementById("usdtAmount").value;
+await usdt.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
 }
 
 async function approveDX(){
-  try{
-    setStatus("Approving DX...");
-    let amt=document.getElementById("dxAmount").value;
-    let tx = await dx.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
-    await tx.wait();
-    setStatus("DX Approved");
-  }catch(e){ setStatus("Error"); }
+let amt=document.getElementById("dxAmount").value;
+await dx.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
 }
 
 async function stakeUSDT(){
-  try{
-    setStatus("Staking USDT...");
-    let amt=document.getElementById("usdtAmount").value;
-    let ref=getRef()||"0x0000000000000000000000000000000000000000";
-    let tx = await staking.stakeUSDT(ethers.utils.parseUnits(amt,18),ref);
-    await tx.wait();
-    setStatus("Staked");
-    loadData();
-  }catch(e){ setStatus("Error"); }
+let amt=document.getElementById("usdtAmount").value;
+let ref=getRef()||"0x0000000000000000000000000000000000000000";
+await staking.stakeUSDT(ethers.utils.parseUnits(amt,18),ref);
+loadData();
 }
 
 async function stakeDX(){
-  try{
-    setStatus("Staking DX...");
-    let amt=document.getElementById("dxAmount").value;
-    let ref=getRef()||"0x0000000000000000000000000000000000000000";
-    let tx = await staking.stakeDX(ethers.utils.parseUnits(amt,18),ref);
-    await tx.wait();
-    setStatus("Staked");
-    loadData();
-  }catch(e){ setStatus("Error"); }
+let amt=document.getElementById("dxAmount").value;
+let ref=getRef()||"0x0000000000000000000000000000000000000000";
+await staking.stakeDX(ethers.utils.parseUnits(amt,18),ref);
+loadData();
 }
 
 async function claim(){
-  try{
-    let btn=document.getElementById("claimBtn");
-    btn.disabled=true;
-    setStatus("Claiming...");
-    let tx = await staking.claim();
-    await tx.wait();
-    setStatus("Claimed");
-    loadData();
-    loadClaims();
-  }catch(e){ setStatus("Error"); }
+await staking.claim();
+loadData();
 }
 
-async function loadClaims(){
-  let addr=await signer.getAddress();
-  let filter=staking.filters.Transfer(stakingAddress,addr);
-  let logs=await staking.queryFilter(filter,0,"latest");
-
-  let table=document.getElementById("claimTable");
-  table.innerHTML="";
-  logs.forEach(l=>{
-    let row=table.insertRow();
-    row.insertCell(0).innerHTML=new Date().toLocaleString();
-    row.insertCell(1).innerHTML=ethers.utils.formatUnits(l.args.value,18);
-  });
-}
-
-async function loadTeam(){
-  // Simple viewer (optional enhancement later with backend)
-  let table=document.getElementById("teamTable");
-  table.innerHTML="<tr><td class='small'>Team view requires event indexing. Basic viewer enabled.</td></tr>";
-}
 </script>
-
 </body>
-     </html>
+  </html>
