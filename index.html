@@ -30,14 +30,11 @@ input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px s
 
 <body>
 
-<!-- EMBED LOGO -->
+<!-- LOGO EMBED -->
 <div class="top">
-
-<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..." 
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
 style="width:180px;margin-bottom:10px">
-
 <button class="btn" onclick="connect()">Connect Wallet</button>
-
 </div>
 
 <div id="wallet"></div>
@@ -45,6 +42,7 @@ style="width:180px;margin-bottom:10px">
 
 <div class="container">
 
+<!-- LEFT PANEL -->
 <div class="left">
 
 <div class="statGrid">
@@ -83,19 +81,18 @@ style="width:180px;margin-bottom:10px">
 
 <div class="card">
 <h3>🔗 Referral Link</h3>
-<div style="display:flex;gap:10px">
-<input id="refInput" style="color:gold" readonly>
+<input id="refInput" readonly style="color:gold;width:90%">
 <button class="btn" onclick="copyRef()">COPY</button>
-</div>
-<div id="copyMsg" style="font-size:12px;color:#888"></div>
-</div>
-
+<div id="copyMsg"></div>
 </div>
 
+</div>
+
+<!-- RIGHT PANEL -->
 <div class="right">
 
 <div class="card centerCard">
-<button class="btn" onclick="toggleStake()">💰 STAKE</button>
+<button class="btn" onclick="toggleStake()"> STAKE</button>
 </div>
 
 <div id="stakeBox" style="display:none">
@@ -104,14 +101,14 @@ style="width:180px;margin-bottom:10px">
 
 <div class="card">
 <h3>USDT</h3>
-<input id="usdtAmount" placeholder="Amount">
+<input id="usdtAmount">
 <button class="btn" onclick="approveUSDT()">Approve</button>
 <button class="btn" onclick="stakeUSDT()">Stake</button>
 </div>
 
 <div class="card">
 <h3>DX</h3>
-<input id="dxAmount" placeholder="Amount">
+<input id="dxAmount">
 <button class="btn" onclick="approveDX()">Approve</button>
 <button class="btn" onclick="stakeDX()">Stake</button>
 </div>
@@ -122,25 +119,20 @@ style="width:180px;margin-bottom:10px">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 
 <div class="card centerColumn">
-<h3>🪙 Claimable</h3>
+<h3> Claimable</h3>
 <div id="claimAmount" class="amount">0</div>
 <button id="claimBtn" class="btn" onclick="claim()" disabled>CLAIM</button>
 </div>
 
 <div class="card centerColumn">
-<button class="btn" onclick="toggleDownline()">👥 VIEW DOWNLINE</button>
-<button class="btn" onclick="toggleHistory()">📜 CLAIM HISTORY</button>
+<button class="btn" onclick="toggleDownline()"> VIEW DOWNLINE</button>
+<button class="btn" onclick="toggleHistory()"> CLAIM HISTORY</button>
 </div>
 
 </div>
 
-<div id="downlineBox" style="display:none" class="card">
-<table id="teamTable"></table>
-</div>
-
-<div id="historyBox" style="display:none" class="card">
-<table id="claimTable"></table>
-</div>
+<div id="downlineBox" style="display:none" class="card"></div>
+<div id="historyBox" style="display:none" class="card"></div>
 
 </div>
 </div>
@@ -165,11 +157,18 @@ const erc20ABI=[
 
 function setStatus(msg){document.getElementById("status").innerHTML=msg;}
 
-function toggleStake(){let box=document.getElementById("stakeBox");box.style.display=box.style.display=="none"?"block":"none";}
-function toggleDownline(){let box=document.getElementById("downlineBox");box.style.display=box.style.display=="none"?"block":"none";}
-function toggleHistory(){let box=document.getElementById("historyBox");box.style.display=box.style.display=="none"?"block":"none";}
-
-function getRef(){const p=new URLSearchParams(window.location.search);return p.get("ref");}
+function toggleStake(){
+let box=document.getElementById("stakeBox");
+box.style.display=box.style.display=="none"?"block":"none";
+}
+function toggleDownline(){
+let b=document.getElementById("downlineBox");
+b.style.display=b.style.display=="none"?"block":"none";
+}
+function toggleHistory(){
+let b=document.getElementById("historyBox");
+b.style.display=b.style.display=="none"?"block":"none";
+}
 
 async function connect(){
 await window.ethereum.request({method:'eth_requestAccounts'});
@@ -186,21 +185,19 @@ dx=new ethers.Contract(dxAddress,erc20ABI,signer);
 let addr=await signer.getAddress();
 document.getElementById("wallet").innerHTML="Wallet: "+addr;
 
-setRefLink();
+setRef();
 loadData();
 setInterval(loadData,10000);
 }
 
-async function setRefLink(){
+async function setRef(){
 let addr=await signer.getAddress();
 document.getElementById("refInput").value=window.location.origin+"?ref="+addr;
 }
 
 function copyRef(){
-let v=document.getElementById("refInput").value;
-navigator.clipboard.writeText(v);
-document.getElementById("copyMsg").innerHTML="Copied!";
-setTimeout(()=>{document.getElementById("copyMsg").innerHTML="";},2000);
+navigator.clipboard.writeText(document.getElementById("refInput").value);
+document.getElementById("copyMsg").innerHTML="Copied";
 }
 
 async function loadData(){
@@ -213,7 +210,6 @@ document.getElementById("dailyReward").innerHTML=ethers.utils.formatUnits(d[1],1
 document.getElementById("totalIncome").innerHTML=ethers.utils.formatUnits(d[2],18);
 document.getElementById("directIncome").innerHTML=ethers.utils.formatUnits(d[3],18);
 document.getElementById("levelIncome").innerHTML=ethers.utils.formatUnits(d[4],18);
-
 document.getElementById("claimAmount").innerHTML=ethers.utils.formatUnits(pending,18);
 
 let btn=document.getElementById("claimBtn");
@@ -221,7 +217,7 @@ btn.disabled = pending < ethers.utils.parseUnits("100",18);
 }
 
 async function approveUSDT(){
-setStatus("Approving...");
+setStatus("Approving USDT...");
 let amt=document.getElementById("usdtAmount").value;
 let tx=await usdt.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
 await tx.wait();
@@ -229,7 +225,7 @@ setStatus("Approved");
 }
 
 async function approveDX(){
-setStatus("Approving...");
+setStatus("Approving DX...");
 let amt=document.getElementById("dxAmount").value;
 let tx=await dx.approve(stakingAddress,ethers.utils.parseUnits(amt,18));
 await tx.wait();
@@ -239,7 +235,7 @@ setStatus("Approved");
 async function stakeUSDT(){
 setStatus("Staking...");
 let amt=document.getElementById("usdtAmount").value;
-let ref=getRef()||"0x0000000000000000000000000000000000000000";
+let ref="0x0000000000000000000000000000000000000000";
 let tx=await staking.stakeUSDT(ethers.utils.parseUnits(amt,18),ref);
 await tx.wait();
 setStatus("Done");
@@ -249,7 +245,7 @@ loadData();
 async function stakeDX(){
 setStatus("Staking...");
 let amt=document.getElementById("dxAmount").value;
-let ref=getRef()||"0x0000000000000000000000000000000000000000";
+let ref="0x0000000000000000000000000000000000000000";
 let tx=await staking.stakeDX(ethers.utils.parseUnits(amt,18),ref);
 await tx.wait();
 setStatus("Done");
@@ -257,8 +253,6 @@ loadData();
 }
 
 async function claim(){
-let btn=document.getElementById("claimBtn");
-btn.disabled=true;
 setStatus("Claiming...");
 let tx=await staking.claim();
 await tx.wait();
