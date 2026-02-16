@@ -7,87 +7,34 @@
 
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial}
-
-.top{
-display:flex;
-flex-direction:column;
-align-items:center;
-padding:30px 0;
-}
-
-.btn{
-background:gold;
-border:none;
-padding:12px 20px;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;
-}
+.top{display:flex;flex-direction:column;align-items:center;padding:30px 0}
+.btn{background:gold;border:none;padding:12px 20px;border-radius:8px;font-weight:bold;cursor:pointer}
 .btn:disabled{opacity:.4}
-
 .container{display:flex}
 .left{width:60%;padding:20px}
 .right{width:40%;padding:20px}
-
-.statGrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.statBox{
-background:#111;
-padding:14px;
-border-radius:12px;
-}
-
-.statBox h4{
-margin:0;
-font-size:13px;
-color:#aaa;
-}
-
-.statValue{
-color:gold;
-font-size:18px;
-font-weight:bold;
-margin-top:5px;
-}
-
-.card{
-background:#111;
-padding:15px;
-border-radius:12px;
-margin:10px;
-}
-
+.statGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.statBox{background:#111;padding:14px;border-radius:12px}
+.statBox h4{margin:0;font-size:13px;color:#aaa}
+.statValue{color:gold;font-size:18px;font-weight:bold;margin-top:5px}
+.card{background:#111;padding:15px;border-radius:12px;margin:10px}
 .amount{color:gold;font-size:20px;font-weight:bold}
-
-input{
-padding:10px;width:90%;margin:10px;
-background:#000;color:#fff;border:1px solid #333;
-}
-
+input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px solid #333}
 .centerCard{display:flex;justify-content:center}
 .centerColumn{display:flex;flex-direction:column;align-items:center;gap:15px}
-
 #wallet{text-align:center;color:#aaa}
 #status{text-align:center;color:gold}
-
-@media(max-width:900px){
-.container{flex-direction:column}
-.left,.right{width:100%}
-}
+@media(max-width:900px){.container{flex-direction:column}.left,.right{width:100%}}
 </style>
 </head>
 
 <body>
 
-<!-- LOGO CENTER -->
+<!-- EMBED LOGO -->
 <div class="top">
 
-<img src="logo.png"
-style="width:180px;filter:drop-shadow(0 0 15px gold);margin-bottom:10px">
+<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..." 
+style="width:180px;margin-bottom:10px">
 
 <button class="btn" onclick="connect()">Connect Wallet</button>
 
@@ -98,7 +45,6 @@ style="width:180px;filter:drop-shadow(0 0 15px gold);margin-bottom:10px">
 
 <div class="container">
 
-<!-- LEFT SIDE -->
 <div class="left">
 
 <div class="statGrid">
@@ -137,18 +83,15 @@ style="width:180px;filter:drop-shadow(0 0 15px gold);margin-bottom:10px">
 
 <div class="card">
 <h3>🔗 Referral Link</h3>
-
 <div style="display:flex;gap:10px">
 <input id="refInput" style="color:gold" readonly>
 <button class="btn" onclick="copyRef()">COPY</button>
 </div>
-
 <div id="copyMsg" style="font-size:12px;color:#888"></div>
 </div>
 
 </div>
 
-<!-- RIGHT SIDE -->
 <div class="right">
 
 <div class="card centerCard">
@@ -220,32 +163,15 @@ const erc20ABI=[
 "function approve(address spender,uint amount) returns(bool)"
 ];
 
-function setStatus(msg){
-document.getElementById("status").innerHTML=msg;
-}
+function setStatus(msg){document.getElementById("status").innerHTML=msg;}
 
-function toggleStake(){
-let box=document.getElementById("stakeBox");
-box.style.display=box.style.display=="none"?"block":"none";
-}
+function toggleStake(){let box=document.getElementById("stakeBox");box.style.display=box.style.display=="none"?"block":"none";}
+function toggleDownline(){let box=document.getElementById("downlineBox");box.style.display=box.style.display=="none"?"block":"none";}
+function toggleHistory(){let box=document.getElementById("historyBox");box.style.display=box.style.display=="none"?"block":"none";}
 
-function toggleDownline(){
-let box=document.getElementById("downlineBox");
-box.style.display=box.style.display=="none"?"block":"none";
-}
-
-function toggleHistory(){
-let box=document.getElementById("historyBox");
-box.style.display=box.style.display=="none"?"block":"none";
-}
-
-function getRef(){
-const p=new URLSearchParams(window.location.search);
-return p.get("ref");
-}
+function getRef(){const p=new URLSearchParams(window.location.search);return p.get("ref");}
 
 async function connect(){
-
 await window.ethereum.request({method:'eth_requestAccounts'});
 provider=new ethers.providers.Web3Provider(window.ethereum);
 signer=provider.getSigner();
@@ -267,8 +193,7 @@ setInterval(loadData,10000);
 
 async function setRefLink(){
 let addr=await signer.getAddress();
-document.getElementById("refInput").value=
-window.location.origin+"?ref="+addr;
+document.getElementById("refInput").value=window.location.origin+"?ref="+addr;
 }
 
 function copyRef(){
@@ -279,7 +204,6 @@ setTimeout(()=>{document.getElementById("copyMsg").innerHTML="";},2000);
 }
 
 async function loadData(){
-
 let addr=await signer.getAddress();
 let d=await staking.userInfo(addr);
 let pending=d[5];
