@@ -36,17 +36,29 @@ input{padding:10px;width:90%;margin:10px;background:#000;color:#fff;border:1px s
 display:flex;
 justify-content:center;
 align-items:center;
-gap:14px;
+gap:12px;
 ">
 
-<img src="https://raw.githubusercontent.com/ut-code-assets/logo/main/dimex.png"
-style="width:90px;filter:drop-shadow(0 0 20px gold);">
+<div style="
+width:60px;
+height:60px;
+border-radius:12px;
+background:linear-gradient(145deg,#000,#222);
+border:2px solid gold;
+display:flex;
+align-items:center;
+justify-content:center;
+color:gold;
+font-weight:bold;
+font-size:22px;
+">
+DX
+</div>
 
 <div style="
 font-size:30px;
 font-weight:bold;
 color:gold;
-letter-spacing:1px;
 ">
 DimeX Dashboard
 </div>
@@ -100,11 +112,16 @@ DimeX Dashboard
 
 </div>
 
-<div class="card centerCard">
+<div class="card" style="text-align:center;">
 <h3>🔗 Referral Link</h3>
-<input id="refInput" readonly style="color:gold;width:90%">
-<button class="btn" onclick="copyRef()">COPY</button>
-<div id="copyMsg"></div>
+
+<input id="refInput"
+readonly
+style="color:gold;width:90%;text-align:center;">
+
+<br><br>
+
+<button class="btn" onclick="copyRef()">COPY LINK</button>
 </div>
 
 </div>
@@ -120,17 +137,27 @@ DimeX Dashboard
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 
-<div class="card centerCard">
-<h3>USDT BEP 20</h3>
-<input id="usdtAmount">
+<div class="card" style="text-align:center;">
+<h3>USDT (BEP20)</h3>
+
+<input id="usdtAmount" placeholder="Amount">
+
+<br>
+
 <button class="btn" onclick="approveUSDT()">Approve</button>
+<br><br>
 <button class="btn" onclick="stakeUSDT()">Stake</button>
 </div>
 
-<div class="card centerCard">
+<div class="card" style="text-align:center;">
 <h3>DX</h3>
-<input id="dxAmount">
+
+<input id="dxAmount" placeholder="Amount">
+
+<br>
+
 <button class="btn" onclick="approveDX()">Approve</button>
+<br><br>
 <button class="btn" onclick="stakeDX()">Stake</button>
 </div>
 
