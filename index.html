@@ -1,245 +1,563 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DimeX Dashboard</title>
-
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<style>
-body{margin:0;background:#000;color:#fff;font-family:Arial}
-
-/* HEADER */
-.header{text-align:center;padding:20px 10px}
-.header-row{display:flex;justify-content:center;align-items:center;gap:10px}
-.logo{
-width:60px;height:60px;border:2px solid gold;border-radius:12px;
-display:flex;align-items:center;justify-content:center;color:gold;font-size:24px}
-.title{font-size:24px;font-weight:bold;color:gold}
-
-/* BUTTON */
-.btn{
-background:gold;border:none;padding:16px;border-radius:10px;
-font-weight:bold;font-size:16px;cursor:pointer;width:90%;margin-top:12px}
-.btn:disabled{opacity:.5}
-
-/* CARDS */
-.card{
-background:#111;padding:18px;border-radius:14px;margin:14px auto;width:92%;text-align:center}
-
-.statGrid{display:grid;grid-template-columns:1fr;gap:12px;width:92%;margin:auto}
-
-.statBox{background:#111;padding:14px;border-radius:12px}
-.statValue{color:gold;font-weight:bold;font-size:18px;margin-top:6px}
-
-input{
-padding:14px;width:90%;margin:12px;background:#000;
-color:#fff;border:1px solid #333;border-radius:8px;font-size:16px}
-
-i{color:gold;margin-right:6px}
-
-/* DESKTOP */
-@media(min-width:768px){
-.statGrid{grid-template-columns:1fr 1fr;width:60%}
-.card{width:420px}
-.btn{width:300px}
-}
-</style>
-</head>
-
-<body>
-
-<div class="header-row">
-
-<div class="logo">
-<img src="https://i.ibb.co/zVB8fHMD/logo.png"
-style="width:90px;object-fit:contain;margin-top:20px;">
-</div>
-
-<div class="title">DimeX Dashboard</div>
-</div>
+<!DOCTYPE html>  <html>  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>DimeX</title>  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">  <!-- ICON LIBRARY (IMPORTANT) -->  <link rel="stylesheet"  
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  <style>  
+body{  
+margin:0;  
+font-family:Poppins;  
+background:#000;  
+color:#fff;  
+}  
   
-<div style="text-align:center;">
-<button class="btn" onclick="connect()">Connect Wallet</button>
+/* SLIDER */  
+.slider{  
+width:100%;  
+height:90vh;  
+position:relative;  
+overflow:hidden;  
+background:#000;  
+}  
   
-</div>
+.slide{  
+position:absolute;  
+top:0;  
+left:0;  
+width:100%;  
+height:100%;  
+object-fit:cover;  
+opacity:0;  
+transition:opacity 0.9s ease-in-out;  
+}  
+  
+.slide.active{  
+opacity:1;  
+}  
+  
+.mobile{display:none;}  
+  
+@media(max-width:768px){  
+  
+.desktop{display:none;}  
+.mobile{display:block;}  
+  
+.slider{  
+height:82vh;  
+}  
+  
+.grid{  
+display:grid;  
+grid-template-columns:1fr !important;  
+}  
+  
+.section{  
+padding:35px 6%;  
+}  
+  
+.box{  
+width:100%;  
+}  
+  
+.heroText h1{  
+font-size:28px;  
+}  
+  
+}  
+  
+.overlay{  
+position:absolute;  
+top:0;  
+left:0;  
+width:100%;  
+height:100%;  
+background:linear-gradient(to bottom,rgba(0,0,0,0.3),rgba(0,0,0,0.6));  
+}  
+  
+.topLogo{  
+position:absolute;  
+top:0;              /* remove top gap */  
+left:50%;  
+transform:translateX(-50%);  
+z-index:5;  
+margin:0;  
+padding:0;  
+}  
+  
+.topLogo img{  
+width:180px;         
+display:block;  
+margin:0 auto;  
+}  
+    
+.heroText{  
+position:absolute;  
+bottom:40px;   /* gap reduce */  
+left:50%;  
+transform:translateX(-50%);  
+text-align:center;  
+}  
+  
+.heroText h1{  
+font-size:52px;  
+color:gold;  
+margin:0;  
+}  
+  
+.fullBanner{  
+width:100%;  
+margin:0;  
+padding:0;  
+}  
+  
+.fullBanner img{  
+width:100%;  
+height:auto;  
+display:block;  
+object-fit:cover;  
+  }  
+    
+.stakingBanner{  
+width:100%;  
+background:#000;  
+margin:0;  
+padding:0;  
+}  
+  
+.stakingBanner img{  
+width:100%;  
+height:auto;  
+display:block;  
+}  
+    
+.btn{  
+background:gold;  
+border:none;  
+padding:16px 30px;  
+border-radius:10px;  
+font-weight:bold;  
+margin-top:15px;  
+cursor:pointer;  
+}  
+  
+/* ticker */  
+.ticker{  
+background:#111;  
+color:gold;  
+padding:14px;  
+overflow:hidden;  
+white-space:nowrap;  
+}  
+  
+.ticker span{  
+display:inline-block;  
+padding-left:100%;  
+animation:scroll 50s linear infinite;  
+}  
+  
+@keyframes scroll{  
+0%{transform:translateX(0)}  
+100%{transform:translateX(-100%)}  
+}  
+  
+/* sections */  
+.section{  
+padding:60px 8%;  
+max-width:1200px;  
+margin:auto;  
+}  
+  
+.section:nth-child(even){  
+background:#0b0b0b;  
+}  
+  
+.section h2{  
+color:gold;  
+font-size:30px;  
+}  
+  
+.infoColumn{  
+max-width:600px;  
+margin:auto;  
+display:flex;  
+flex-direction:column;  
+gap:25px;  
+}  
+  
+.infoCard{  
+background:#0d0d0d;  
+border:1px solid #222;  
+padding:35px;  
+border-radius:16px;  
+text-align:center;  
+transition:0.3s;  
+}  
+  
+.infoCard:hover{  
+border:1px solid gold;  
+box-shadow:0 0 25px rgba(255,215,0,0.2);  
+transform:translateY(-4px);  
+}  
+  
+.infoLogo{  
+width:50px;  
+margin-bottom:15px;  
+}  
+  
+.infoIcon{  
+font-size:34px;  
+color:gold;  
+margin-bottom:15px;  
+}  
+  
+.infoTitle{  
+color:#aaa;  
+font-size:15px;  
+}  
+  
+.infoValue{  
+font-size:22px;  
+color:#fff;  
+margin-top:6px;  
+font-weight:bold;  
+}  
+    
+.icon{  
+color:gold;  
+margin-right:8px;  
+}  
+  
+.grid{  
+display:grid;  
+grid-template-columns:1fr 1fr;  
+gap:25px;  
+}  
+  
+.box{  
+background:#111;  
+padding:20px;  
+border-radius:12px;  
+}  
+  
+.footer{  
+text-align:center;  
+padding:40px;  
+color:#777;  
+}  
+  
+}  
+</style>  </head>  <body>  <!-- SLIDER -->  <div class="slider">  <!-- TOP LOGO -->  <div class="topLogo">  
+<img src="https://raw.githubusercontent.com/glomartcom-netizen/Dimexhome/main/logodashbord.png">  
+</div>  <!-- DESKTOP -->  <img class="slide desktop active"  
+src="https://glomartcom-netizen.github.io/Dimexhome/file_0000000010947208bc00676243f4f87a.png">
 
-<div id="wallet" style="text-align:center;color:#aaa"></div>
-<div id="status" style="text-align:center;color:gold"></div>
+<img class="slide desktop"  
+src="https://glomartcom-netizen.github.io/Dimexhome/file_00000000c6a072089a23049a3dd76e06.png">
 
-<div class="statGrid">
+<!-- MOBILE -->  <img class="slide mobile"  
+src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/mobileslide1.png">
 
-<div class="statBox"><i class="fa-solid fa-coins"></i> Total Stake
-<div id="totalStake" class="statValue">0</div></div>
+<img class="slide mobile"  
+src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/mobileslide2.png">
 
-<div class="statBox"><i class="fa-solid fa-bolt"></i> Daily Reward
-<div id="dailyReward" class="statValue">0</div></div>
+<div class="overlay"></div>  <div class="heroText">  
+<h1>DimeX (DMX)</h1>  
+<button class="btn" onclick="enter()">ENTER DASHBOARD</button>  
+</div>  </div>  <script>  
+function enter(){  
+  window.location.href =  
+  "https://glomartcom-netizen.github.io/Dimexhome/dashboard.html";  
+}  
+</script>  </div>  <!-- PRICE TICKER -->  <div class="ticker">  
+<span id="tickerText">Loading crypto market...</span>
+  
+</div>  <!-- PROJECT DETAILS GRAND -->  <div class="section" style="text-align:center;">  <h2 style="margin-bottom:40px;">  
+<i class="fa-solid fa-folder-open icon"></i>  
+DimeX Project Overview  
+</h2>  <div style="  
+max-width:850px;  
+margin:auto;  
+display:flex;  
+flex-direction:column;  
+gap:25px;  
+">  <!-- TOKEN -->  <div class="box" style="display:flex;align-items:center;gap:20px;">  
+<img src="https://i.ibb.co/HpqwGFqt/logo.png" style="width:60px">  
+<div style="text-align:left;">  
+<b style="font-size:20px;">Token</b><br>  
+DMX (DimeX)  
+</div>  
+</div>  <!-- NETWORK -->  <div class="box" style="display:flex;align-items:center;gap:20px;">  
+<img src="https://cryptologos.cc/logos/bnb-bnb-logo.png" style="width:50px">  
+<div style="text-align:left;">  
+<b style="font-size:20px;">Network</b><br>  
+BNB Smart Chain  
+</div>  
+</div>  <!-- BSC VERIFIED -->  <div class="box" style="display:flex;align-items:center;gap:20px;">  
+<img src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/bscscan.png" style="width:50px">  
+<div style="text-align:left;">   
+<b style="font-size:20px;">Contract</b><br>  
+BscScan Verified  
+</div>  
+</div>  <!-- STAKING -->  <div class="box" style="display:flex;align-items:center;gap:20px;">  
+<i class="fa-solid fa-coins" style="font-size:40px;color:gold;"></i>  
+<div style="text-align:left;">  
+<b style="font-size:20px;">Staking System</b><br>  
+On-chain rewards + secure staking  
+</div>  
+</div>  <!-- SUPPLY -->  <div class="box" style="display:flex;align-items:center;gap:20px;">  
+<i class="fa-solid fa-database" style="font-size:40px;color:gold;"></i>  
+<div style="text-align:left;">  
+<b style="font-size:20px;">Total Supply</b><br>  
+1,000,000,000 DMX  
+</div>  
+</div>  </div>  
+</div>    </div>  <!-- grid close -->  
+</div>    <!-- section close -->  <!-- ABOUT -->  <div class="section">  
+<h2><i class="fa-solid fa-circle-info icon"></i>About DimeX</h2>  
+<p>  
+DimeX is designed as a staking-focused crypto ecosystem that enables users to stake DMX tokens and participate in a transparent on-chain reward system.    
+The platform emphasizes simplicity, long-term sustainability, and trust while creating a secure environment for users to earn rewards through blockchain technology.  
+</p>  
+</div>  
+<!-- MISSION + VISION -->  
+<div class="section grid">  
+<div>  
+<h2><i class="fa-solid fa-bullseye"></i> Mission</h2>  
+<p>  
+Our mission is to build a secure and transparent staking ecosystem on the BNB Smart Chain that empowers users through decentralized technology and sustainable reward mechanisms.  
+</p>  
+</div>  <div>  
+<h2><i class="fa-solid fa-eye"></i> Vision</h2>  
+<p>  
+Our vision is to create a globally trusted staking platform that promotes financial participation through blockchain innovation and responsible growth.  
+</p>  
+</div>  
+</div>  <!-- CORE VALUES -->  <div class="section">  
+<h2><i class="fa-solid fa-shield"></i> Core Values</h2>  <div class="grid">  <div class="box">  
+<div class="icon"><i class="fa-solid fa-lock"></i></div>  
+Smart contract security  
+</div>  <div class="box">  
+<div class="icon"><i class="fa-solid fa-users"></i></div>  
+Community growth  
+</div>  <div class="box">  
+<div class="icon"><i class="fa-solid fa-chart-line"></i></div>  
+Sustainable rewards  
+</div>  <div class="box">  
+<div class="icon"><i class="fa-solid fa-globe"></i></div>  
+Global expansion  
+</div>  </div>  
+</div>  <!-- STAKING BANNER ONLY -->  <div class="stakingBanner">  
+  <img src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/Dimeximage.png">  
+</div>  <!-- STAKING -->  <div class="section">  
+<h2><i class="fa-solid fa-coins"></i> Staking Platform</h2>  
+<p>  
+Secure decentralized staking with transparent reward distribution and community-driven structure.  
+</p>  <div class="grid">  
+<div class="box">✔ Secure staking</div>  
+<div class="box">✔ Transparent rewards</div>  
+<div class="box">✔ On-chain tracking</div>  
+<div class="box">✔ Community rewards</div>  
+</div>  
+</div>  <!-- VARIOUS ASSETS -->  <div class="section">  
+<h2><i class="fa-solid fa-layer-group icon"></i>Various Assets</h2>  
+<p>  
+DimeX supports multiple staking-related assets and future DeFi utilities including liquidity integration and ecosystem expansion.  
+</p>  
+</div>  <!-- TOOLS -->  <div class="section">  
+<h2><i class="fa-solid fa-screwdriver-wrench icon"></i>Enhanced Tools</h2>  
+<p>  
+Advanced tools for analytics, reward tracking, and smart-contract interaction designed for usability and performance.  
+</p>  
+</div>  <!-- MARKETING BANNERS -->  <div class="fullBanner">  
+  <img src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/defi.png">  
+</div>  <div class="fullBanner">  
+  <img src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/lock.png">  
+</div>  <!-- MARKET ANALYSIS -->  <div class="section">  <h2>  
+<i class="fa-solid fa-chart-line" style="color:gold;margin-right:10px;"></i>  
+Market Analysis  
+</h2>  <p style="color:#ccc;font-size:18px;">  
+DimeX integrates real-time cryptocurrency market insights allowing users to track global market movements, price trends and ecosystem growth across digital assets.  
+</p>  <div class="grid" style="margin-top:30px">  <div class="box">  
+<div class="icon">  
+<i class="fa-solid fa-arrow-trend-up"></i>  
+</div>  
+<b>Live Market Trends</b><br>  
+Monitor real-time price movements across major cryptocurrencies like BTC, ETH, BNB and stablecoins.  
+</div>  <div class="box">  
+<div class="icon">  
+<i class="fa-solid fa-chart-area"></i>  
+</div>  
+<b>Advanced Charts</b><br>  
+Visual charts help users understand market cycles, volatility and price direction.  
+</div>  <div class="box">  
+<div class="icon">  
+<i class="fa-solid fa-globe"></i>  
+</div>  
+<b>Global Market Data</b><br>  
+Track global crypto market capitalization, trading volume and ecosystem growth indicators.  
+</div>  <div class="box">  
+<div class="icon">  
+<i class="fa-solid fa-bolt"></i>  
+</div>  
+<b>Real-time Updates</b><br>  
+Market data refreshes continuously to ensure up-to-date information.  
+</div>  <div class="box">  
+<div class="icon">  
+<i class="fa-solid fa-coins"></i>  
+</div>  
+<b>Multi-Asset Support</b><br>  
+Supports analysis across multiple digital assets and blockchain ecosystems.  
+</div>  <div class="box">  
+<div class="icon">  
+<i class="fa-solid fa-shield"></i>  
+</div>  
+<b>Secure Data</b><br>  
+All market data is fetched from trusted public crypto APIs.  
+</div>  </div>  <!-- disclaimer -->  <div class="box" style="margin-top:25px;background:#0e0e0e">  
+<div class="icon">  
+<i class="fa-solid fa-triangle-exclamation"></i>  
+</div>  
+<b>Market Disclaimer</b><br>  
+Market analysis tools are provided for informational purposes only and do not constitute financial advice.    
+Users should conduct independent research before making financial decisions.  
+</div>  <!-- SMART CONTRACT -->  <div class="section">  
+<div class="section-inner">  <div class="box" style="text-align:center; max-width:650px; margin:auto;">  <h2>  
+<i class="fa-solid fa-file-contract icon"></i>  
+Smart Contract  
+</h2>  <input style="  
+width:80%;  
+max-width:500px;  
+padding:12px;  
+background:#000;  
+color:#fff;  
+border:1px solid #333;  
+border-radius:8px;  
+display:block;  
+margin:15px auto;  
+"  
+value="PASTE_TOKEN_ADDRESS">
 
-<div class="statBox"><i class="fa-solid fa-chart-line"></i> Total Income
-<div id="totalIncome" class="statValue">0</div></div>
+<div style="margin-top:10px;color:#aaa;">  
+Verify contract on   
+<span style="color:gold;">BscScan</span>  
+</div>  </div>  </div>   <!-- grid close -->  
+</div>   <!-- section-inner close -->  
+</div>   <!-- section close -->  <!-- ROADMAP FULL WIDTH BANNER -->  <div style="width:100%;margin:0;padding:0;background:#000;">  
+  <img   
+  src="https://raw.githubusercontent.com/glomartcom-netizen/DimeXtest/main/roadmap.png"  
+  style="  
+  width:100vw;  
+  height:auto;  
+  display:block;  
+  margin:0;  
+  padding:0;  
+  ">  
+</div>  <!-- ROADMAP -->  <div class="section">  
+<div class="section-inner">  <h2>  
+<i class="fa-solid fa-road icon"></i>  
+Project Roadmap  
+</h2>  <p style="color:#ccc;font-size:18px;">  
+The DimeX roadmap outlines the development phases of the ecosystem, focusing on long-term sustainability, platform security, and community growth.    
+Each phase represents the progressive expansion of the DimeX staking infrastructure.  
+</p>  <div class="grid" style="margin-top:30px">  <div class="box">  
+<div class="icon"><i class="fa-solid fa-cube"></i></div>  
+<b>Phase 1 – Foundation</b><br><br>  
+• DMX token creation on BNB Smart Chain    
+• Smart contract development & deployment    
+• Branding and official website launch    
+• Initial ecosystem structure setup    
+</div>  <div class="box">  
+<div class="icon"><i class="fa-solid fa-lock"></i></div>  
+<b>Phase 2 – Staking Launch</b><br><br>  
+• Staking smart contract release    
+• Dashboard user interface launch    
+• Wallet integration (Web3)    
+• Reward distribution activation    
+</div>  <div class="box">  
+<div class="icon"><i class="fa-solid fa-chart-line"></i></div>  
+<b>Phase 3 – Growth</b><br><br>  
+• Platform optimization    
+• Ecosystem expansion    
+• Community development    
+• Additional DeFi utilities integration    
+</div>  </div>   <!-- grid close -->  
+</div>   <!-- section-inner close -->  
+</div>   <!-- section close -->  <!-- DECLARATION -->  <div class="section">  
+<div class="section-inner">  <h2>  
+<i class="fa-solid fa-file-signature icon"></i>  
+Declaration  
+</h2>  <div class="box" style="max-width:700px; margin:auto; text-align:center; color:#ccc;">  DimeX is a blockchain-based staking platform operating on BNB Smart Chain.
+All transactions are executed through publicly verifiable smart contracts.
+Cryptocurrency involves risk and users should conduct independent research before participation.
 
-<div class="statBox"><i class="fa-solid fa-user-plus"></i> Direct Income
-<div id="directIncome" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-sitemap"></i> Level Income
-<div id="levelIncome" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-users"></i> Team Count
-<div id="teamCount" class="statValue">0</div></div>
-
-</div>
-
-<div class="card">
-<h3><i class="fa-solid fa-link"></i> Referral Link</h3>
-<input id="refInput" readonly>
-<button class="btn" onclick="copyRef()"><i class="fa-solid fa-copy"></i> COPY</button>
-</div>
-
-<div class="card">
-<button class="btn" onclick="toggleStake()"><i class="fa-solid fa-lock"></i> STAKE</button>
-</div>
-
-<div id="stakeBox" style="display:none">
-
-<div class="card">
-<h3>USDT (BEP20)</h3>
-<input id="usdtAmount" placeholder="Amount">
-<button class="btn" onclick="approveUSDT()"><i class="fa-solid fa-check"></i> Approve</button>
-<button class="btn" onclick="stakeUSDT()"><i class="fa-solid fa-arrow-up"></i> Stake</button>
-</div>
-
-<div class="card">
-<h3>DX</h3>
-<input id="dxAmount" placeholder="Amount">
-<button class="btn" onclick="approveDX()"><i class="fa-solid fa-check"></i> Approve</button>
-<button class="btn" onclick="stakeDX()"><i class="fa-solid fa-arrow-up"></i> Stake</button>
-</div>
-
-</div>
-
-<div class="card">
-<h3><i class="fa-solid fa-gift"></i> Claimable</h3>
-<div id="claimAmount" style="color:gold;font-size:22px">0</div>
-<button id="claimBtn" class="btn" onclick="claim()" disabled>
-<i class="fa-solid fa-hand-holding-dollar"></i> CLAIM
-</button>
-</div>
-
-<div class="card">
-<button class="btn"><i class="fa-solid fa-network-wired"></i> VIEW DOWNLINE</button>
-<button class="btn"><i class="fa-solid fa-clock-rotate-left"></i> CLAIM HISTORY</button>
-</div>
-
-<script>
-let provider, signer, staking, usdt, dx;
-
-const STAKING_ADDRESS="PASTE_STAKING_ADDRESS";
-const DX_TOKEN="PASTE_DX_TOKEN_ADDRESS";
-const USDT="0x55d398326f99059fF775485246999027B3197955";
-
-const ABI=[
-"function stakeUSDT(uint amount,address ref)",
-"function stakeDX(uint amount,address ref)",
-"function claim()",
-"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)"
-];
-
-const ERC20=["function approve(address spender,uint amount) returns(bool)"];
-
-function setStatus(t){document.getElementById("status").innerHTML=t}
-
-function toggleStake(){
-let b=document.getElementById("stakeBox");
-b.style.display=b.style.display=="none"?"block":"none";
-}
-
-async function connect(){
-await window.ethereum.request({method:'eth_requestAccounts'});
-provider=new ethers.providers.Web3Provider(window.ethereum);
-signer=provider.getSigner();
-
-const net=await provider.getNetwork();
-if(net.chainId!==56){alert("Switch to BSC");return;}
-
-staking=new ethers.Contract(STAKING_ADDRESS,ABI,signer);
-usdt=new ethers.Contract(USDT,ERC20,signer);
-dx=new ethers.Contract(DX_TOKEN,ERC20,signer);
-
-let addr=await signer.getAddress();
-document.getElementById("wallet").innerHTML="Wallet: "+addr;
-
-document.getElementById("refInput").value=location.href+"?ref="+addr;
-
-loadData();
-setInterval(loadData,10000);
-}
-
-async function loadData(){
-let addr=await signer.getAddress();
-let d=await staking.userInfo(addr);
-let pending=d[5];
-
-document.getElementById("totalStake").innerHTML=ethers.utils.formatUnits(d[0],18);
-document.getElementById("dailyReward").innerHTML=ethers.utils.formatUnits(d[1],18);
-document.getElementById("totalIncome").innerHTML=ethers.utils.formatUnits(d[2],18);
-document.getElementById("directIncome").innerHTML=ethers.utils.formatUnits(d[3],18);
-document.getElementById("levelIncome").innerHTML=ethers.utils.formatUnits(d[4],18);
-document.getElementById("claimAmount").innerHTML=ethers.utils.formatUnits(pending,18);
-
-document.getElementById("claimBtn").disabled =
-pending < ethers.utils.parseUnits("100",18);
-}
-
-function copyRef(){
-navigator.clipboard.writeText(document.getElementById("refInput").value);
-}
-
-async function approveUSDT(){
-let amt=document.getElementById("usdtAmount").value;
-setStatus("Approving...");
-let tx=await usdt.approve(STAKING_ADDRESS,ethers.utils.parseUnits(amt,18));
-await tx.wait();
-setStatus("Approved");
-}
-
-async function approveDX(){
-let amt=document.getElementById("dxAmount").value;
-setStatus("Approving...");
-let tx=await dx.approve(STAKING_ADDRESS,ethers.utils.parseUnits(amt,18));
-await tx.wait();
-setStatus("Approved");
-}
-
-async function stakeUSDT(){
-let amt=document.getElementById("usdtAmount").value;
-setStatus("Staking...");
-let tx=await staking.stakeUSDT(ethers.utils.parseUnits(amt,18),
-"0x0000000000000000000000000000000000000000");
-await tx.wait();
-setStatus("Done");
-loadData();
-}
-
-async function stakeDX(){
-let amt=document.getElementById("dxAmount").value;
-setStatus("Staking...");
-let tx=await staking.stakeDX(ethers.utils.parseUnits(amt,18),
-"0x0000000000000000000000000000000000000000");
-await tx.wait();
-setStatus("Done");
-loadData();
-}
-
-async function claim(){
-setStatus("Claiming...");
-let tx=await staking.claim();
-await tx.wait();
-setStatus("Claimed");
-loadData();
-}
+</div>  </div>  
+</div>  <!-- CONTACT -->  <div class="section">  
+<h2><i class="fa-solid fa-envelope icon"></i>Contact</h2>  <div class="box" style="text-align:center;max-width:500px;margin:auto">  <div>  
+<i class="fa-solid fa-paper-plane" style="color:gold;"></i>  
+info@dimex.app  
+</div>  <div style="margin-top:10px">  
+<i class="fa-solid fa-globe" style="color:gold;"></i>  
+www.dimex.app  
+</div>  </div>  
+</div>  <div class="footer">© 2026 DimeX</div>  <script>  
+  
+function enter(){  
+  window.location.href="dashboard.html";  
+}  
+  
+window.addEventListener("load", function(){  
+  
+  // PRICE TICKER  
+  async function loadPrices(){  
+    try{  
+  
+      let res = await fetch(  
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1"  
+      );  
+  
+      let data = await res.json();  
+  
+      let txt = "";  
+  
+      data.forEach(c=>{  
+        txt += `${c.symbol.toUpperCase()} $${c.current_price} • `;  
+      });  
+  
+      document.getElementById("tickerText").innerHTML = txt;  
+  
+    }catch(e){  
+      document.getElementById("tickerText").innerHTML =  
+      "API blocked / internet issue";  
+    }  
+  }  
+  
+  loadPrices();  
+setInterval(loadPrices,15000);  
+  
+});  
+</script>  <script>  
+window.addEventListener("load", function(){  
+  
+let slides = document.querySelectorAll(".slide");  
+let i = 0;  
+  
+slides[i].classList.add("active");  
+  
+setInterval(()=>{  
+  
+let next = (i + 1) % slides.length;  
+  
+slides[next].classList.add("active");  
+  
+setTimeout(()=>{  
+slides[i].classList.remove("active");  
+i = next;  
+}, 900);  
+  
+}, 3500);  
+  
+});  
 </script>
-
-</body>
-                                           </html>
+  
+</body>  
+</html>  
