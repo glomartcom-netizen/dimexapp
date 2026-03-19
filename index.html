@@ -1,1 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DimeX Ultimate Admin</title>
 
+<style>
+body{font-family:sans-serif;margin:0;display:flex;background:#f4f7f6}
+.sidebar{width:240px;background:#111;color:#fff;padding:20px;height:100vh}
+.sidebar div{padding:12px;cursor:pointer;border-radius:5px}
+.sidebar div:hover{background:#333}
+.main{flex:1;padding:20px}
+.section{display:none;background:#fff;padding:20px;border-radius:10px}
+.active{display:block}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eee}
+button{padding:5px 10px;margin:2px;cursor:pointer}
+input{padding:8px;margin:5px}
+#loginOverlay{position:fixed;width:100%;height:100%;background:#fff;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+
+<body>
+
+<div id="loginOverlay">
+<div>
+<h2>DimeX Admin</h2>
+<input type="password" id="adminPass" placeholder="Password"><br><br>
+<button onclick="checkAuth()">Login</button>
+</div>
+</div>
+
+<div class="sidebar">
+<div onclick="show('members')">👥 Members</div>
+<div onclick="show('withdraw')">🏧 Withdraw</div>
+<div onclick="show('deposit')">💳 Deposits</div>
+<div onclick="show('report')">📊 Report</div>
+<div onclick="show('fund')">💰 Add Fund</div>
+<div onclick="show('search')">🔍 Search</div>
+<div onclick="show('convert')">🔁 Wallet→Deposit</div>
+</div>
+
+<div class="main">
+
+<div id="members" class="section active">
+<h3>Members</h3>
+<table id="memberTable"></table>
+</div>
+
+<div id="withdraw" class="section">
+<h3>Withdraw</h3>
+<table id="withdrawTable"></table>
+</div>
+
+<div id="deposit" class="section">
+<h3>Deposits</h3>
+<table id="depositTable"></table>
+</div>
+
+<div id="report" class="section">
+<h3>Daily Report</h3>
+<div id="reportContent"></div>
+</div>
+
+<div id="fund" class="section">
+<input id="mid" placeholder="Member ID">
+<input id="amt" type="number" placeholder="Amount">
+<button onclick="addFund()">Add Fund</button>
+<p id="msg"></p>
+</div>
+
+<div id="search" class="section">
+<input id="searchId" placeholder="Member ID">
+<button onclick="searchUser()">Search</button>
+<div id="searchResult"></div>
+</div>
+
+<div id="convert" class="section">
+<input id="c_mid" placeholder="Member ID">
+<input id="c_amt" type="number" placeholder="Amount">
+<button onclick="convertWallet()">Convert</button>
+</div>
+
+</div>
+
+<script>
+const API="http://localhost:3000";
+let current="members";
+
+async function checkAuth(){
+const res=await fetch(API+"/api/admin/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:"admin",password:adminPass.value})
+});
+const d=await res.json();
+if(d.success){
+loginOverlay.style.display="none";
+init();
+}else alert("Wrong Password");
+}
+
+function init(){
+refresh();
+setInterval(refresh,30000);
+}
+
+function show(id){
+current=id;
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+refresh();
+}
+
+function refresh(){
+if(current==="members") loadMembers();
+if(current==="withdraw") loadWithdraw();
+if(current==="deposit") loadDeposits();
+if(current==="report") loadReport();
+}
+
+async function loadMembers(){
+const data=await fetch(API+"/api/admin/members").then(r=>r.json());
+
+let html=`<tr>
+<th>ID</th><th>Name</th><th>Password</th>
+<th>Sponsor</th><th>Mobile</th><th>Email</th>
+<th>Status</th><th>Deposit</th><th>Action</th></tr>`;
+
+data.forEach(u=>{
+html+=`<tr>
+<td>${u.member_id}</td>
+<td>${u.full_name}</td>
+<td>${u.password}</td>
+<td>${u.sponsor_id} (${u.sponsor_name||''})</td>
+<td>${u.mobile||''}</td>
+<td>${u.email||''}</td>
+<td>${u.status}</td>
+<td>$${u.total_deposit}</td>
+<td>
+<button onclick="openUser('${u.member_id}')">Open</button>
+<button onclick="editUser('${u.id}','${u.full_name}','${u.mobile}','${u.email}')">Edit</button>
+<button onclick="toggle('${u.member_id}','BLOCKED')">Block</button>
+<button onclick="toggle('${u.member_id}','ACTIVE')">Unblock</button>
+</td>
+</tr>`;
+});
+
+memberTable.innerHTML=html;
+}
+
+async function editUser(id,name,mob,email){
+const n=prompt("Name",name);
+if(n===null) return;
+const m=prompt("Mobile",mob);
+const e=prompt("Email",email);
+
+await fetch(API+"/api/admin/update-user",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id,name:n,mobile:m,email:e})
+});
+loadMembers();
+}
+
+async function toggle(mid,status){
+if(!confirm("Are you sure?")) return;
+
+await fetch(API+"/api/admin/block-user",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({member_id:mid,status})
+});
+loadMembers();
+}
+
+function openUser(mid){
+window.open("http://localhost:3000/user.html?member="+mid);
+}
+
+async function loadWithdraw(){
+const data=await fetch(API+"/api/admin/withdrawals").then(r=>r.json());
+let html="<tr><th>Member</th><th>Amount</th><th>Status</th><th>Action</th></tr>";
+
+data.forEach(w=>{
+html+=`<tr>
+<td>${w.member_id}</td>
+<td>$${w.amount}</td>
+<td>${w.status}</td>
+<td>${w.status==="PENDING"?`<button onclick="pay(${w.id})">Pay</button>`:"✅"}</td>
+</tr>`;
+});
+withdrawTable.innerHTML=html;
+}
+
+async function pay(id){
+if(!confirm("Confirm payment?")) return;
+
+await fetch(API+"/api/admin/withdraw-paid",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+});
+loadWithdraw();
+}
+
+async function loadDeposits(){
+const data=await fetch(API+"/api/admin/deposits").then(r=>r.json());
+let html="<tr><th>Member</th><th>Amount</th><th>Status</th><th>Action</th></tr>";
+
+data.forEach(d=>{
+html+=`<tr>
+<td>${d.member_id}</td>
+<td>$${d.amount}</td>
+<td>${d.status}</td>
+<td>${d.status==="PENDING"?`<button onclick="approve(${d.id})">Approve</button>`:"✅"}</td>
+</tr>`;
+});
+depositTable.innerHTML=html;
+}
+
+async function approve(id){
+if(!confirm("Approve deposit?")) return;
+
+await fetch(API+"/api/admin/deposit-approve",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({depositId:id})
+});
+loadDeposits();
+}
+
+async function loadReport(){
+const data=await fetch(API+"/api/admin/daily-report").then(r=>r.json());
+
+let html="<table><tr><th>Date</th><th>Users</th><th>Total</th><th>ROI</th><th>Direct</th><th>Level</th></tr>";
+
+data.forEach(r=>{
+html+=`<tr>
+<td>${r.date}</td>
+<td>${r.total_users}</td>
+<td>$${r.total_payout}</td>
+<td>$${r.roi}</td>
+<td>$${r.direct}</td>
+<td>$${r.level}</td>
+</tr>`;
+});
+
+html+="</table>";
+reportContent.innerHTML=html;
+}
+
+async function searchUser(){
+const id=searchId.value;
+
+const u=await fetch(API+"/api/user/"+id).then(r=>r.json());
+const w=await fetch(API+"/api/user/wallet/"+id).then(r=>r.json());
+
+searchResult.innerHTML=`
+<p><b>${u.full_name}</b></p>
+<p>ID: ${u.member_id}</p>
+<p>Mobile: ${u.mobile}</p>
+<p>Email: ${u.email}</p>
+<p>Status: ${u.status}</p>
+<p>Deposit: $${u.total_deposit}</p>
+<p>Wallet: $${w.balance}</p>
+`;
+}
+
+async function addFund(){
+await fetch(API+"/api/admin/add-fund",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({member_id:mid.value,amount:amt.value})
+});
+msg.innerText="Added Successfully";
+}
+
+async function convertWallet(){
+if(!confirm("Convert wallet to deposit?")) return;
+
+await fetch(API+"/api/admin/wallet-to-deposit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({member_id:c_mid.value,amount:c_amt.value})
+});
+alert("Converted Successfully");
+}
+</script>
+
+</body>
+</html>
